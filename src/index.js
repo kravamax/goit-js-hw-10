@@ -1,7 +1,7 @@
 import throttle from 'lodash.debounce';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
 
-import { fetchCountries } from './js/helpers/fetchCountries';
+import { fetchCountries } from './js/services/fetchCountries';
 import { getRefs } from './js/getRefs';
 const { searchBox } = getRefs();
 import { cleanInterface } from './js/helpers/cleanInterface';
@@ -13,6 +13,13 @@ import './css/styles.css';
 const DEBOUNCE_DELAY = 300;
 
 searchBox.addEventListener('input', throttle(searchOutput, DEBOUNCE_DELAY));
+searchBox.addEventListener('keypress', event => {
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    searchBox.value = '';
+    cleanInterface();
+  }
+});
 
 function searchOutput() {
   const search = searchBox.value.trim();
@@ -22,7 +29,13 @@ function searchOutput() {
     return;
   }
 
-  fetchCountries(search).then(filterCountryList).catch(console.log);
+  fetchCountries(search)
+    .then(filterCountryList)
+    .catch(error => {
+      console.error(error);
+      cleanInterface();
+      Notify.failure('Oops, there is no country with that name');
+    });
 }
 
 function filterCountryList(data) {
