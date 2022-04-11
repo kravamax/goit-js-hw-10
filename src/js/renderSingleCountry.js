@@ -6,7 +6,7 @@ export function renderSingleCountry(data) {
   const populationWithSpaces = data[0].population.toLocaleString().replaceAll(',', ' ');
 
   countryInfo.innerHTML = data
-    .map(({ name, capital, flags }) => {
+    .map(({ name, capital, flags, languages }) => {
       return `
         <div class="card">
         <div class="card-header">

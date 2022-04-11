@@ -23,7 +23,7 @@ searchBox.addEventListener('keypress', event => {
   }
 });
 
-function searchOutput() {
+async function searchOutput() {
   const search = searchBox.value.trim();
   validOutput = false;
 
@@ -32,14 +32,28 @@ function searchOutput() {
     return;
   }
 
-  fetchCountries(search)
-    .then(filterCountryList)
-    .catch(error => {
-      console.error(error);
-      cleanInterface();
+  // fetchCountries(search)
+  //   .then(filterCountryList)
+  //   .catch(error => {
+  //     console.error(error);
+  //     cleanInterface();
 
-      Notify.failure('Oops, there is no country with that name');
-    });
+  //     Notify.failure('Oops, there is no country with that name');
+  //   });
+
+  // Использование try...catch & async await
+
+  try {
+    const data = await fetchCountries(search);
+    const filter = await filterCountryList(data);
+
+    // return filter;
+  } catch (error) {
+    console.log(error.message);
+    cleanInterface();
+
+    Notify.failure('Oops, there is no country with that name');
+  }
 }
 
 function filterCountryList(data) {
